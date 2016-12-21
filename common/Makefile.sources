@@ -1,0 +1,24 @@
+common_SOURCES =              \
+    compositor/compositor.cpp \
+    compositor/factory.cpp \
+    compositor/gl/egloffscreencontext.cpp \
+    compositor/gl/glprogram.cpp \
+    compositor/gl/glrenderer.cpp \
+    compositor/gl/glsurface.cpp \
+    compositor/gl/nativeglresource.cpp \
+    compositor/nativesurface.cpp \
+    compositor/renderstate.cpp \
+    compositor/scopedrendererstate.cpp \
+    core/gpudevice.cpp \
+    core/headless.cpp \
+    core/internaldisplay.cpp \
+    core/nativesync.cpp \
+    core/overlaylayer.cpp \
+    display/displayplane.cpp \
+    display/displayplanemanager.cpp \
+    display/overlaybuffer.cpp \
+    display/pageflipeventhandler.cpp \
+    display/pageflipstate.cpp \
+    utils/hwcthread.cpp \
+    utils/separate_rects.cpp \
+	$(NULL)

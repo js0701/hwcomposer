@@ -1,0 +1,4 @@
+public_SOURCES =              \
+    hwclayer.cpp
+    drmscopedtypes.cpp
+	$(NULL)
