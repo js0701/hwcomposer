@@ -43,6 +43,9 @@ AC_PROG_LIBTOOL
 AC_SUBST(ASSEMBLER_WARN_CFLAGS)
 
 PKG_CHECK_MODULES(DRM, [libdrm])
+PKG_CHECK_MODULES(GBM, [gbm])
+PKG_CHECK_MODULES(EGL, [egl])
+PKG_CHECK_MODULES(GLES2, [glesv2])
 
 AC_ARG_ENABLE(git-hash,
 	      AS_HELP_STRING([--disable-git-hash],
@@ -53,5 +56,6 @@ AC_SUBST(GIT_HASH, [$git_hash])
 AC_CONFIG_FILES([
 		 Makefile
 		 common/Makefile
+         tests/Makefile
 		 ])
 AC_OUTPUT
