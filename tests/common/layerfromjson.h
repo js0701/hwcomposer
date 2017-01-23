@@ -1,6 +1,9 @@
 #ifndef LAYER_FROM_JSON_H
 #define LAYER_FROM_JSON_H
 
+#include <vector>
+#include <string>
+#include <stdint.h>
 
 typedef enum {
 
@@ -81,14 +84,9 @@ typedef enum {
  * index 1 = Cb:Cr plane, [15:0] Cb:Cr little endian
  */
  LAYER_FORMATNV12  = 47,       //('N', 'V', '1', '2') /* 2x2 subsampled Cr:Cb plane */
- LAYER_FORMATNV21  = 48       //('N', 'V', '2', '1') /* 2x2 subsampled Cb:Cr plane */
+ LAYER_FORMATNV21  = 48,       //('N', 'V', '2', '1') /* 2x2 subsampled Cb:Cr plane */
  LAYER_FORMATNV16  = 49,       //('N', 'V', '1', '6') /* 2x1 subsampled Cr:Cb plane */
  LAYER_FORMATNV61  = 50,       //('N', 'V', '6', '1') /* 2x1 subsampled Cb:Cr plane */
-
- LAYER_FORMATNV12  = 51,       //('N', 'V', '1', '2') /* 2x2 subsampled Cr:Cb plane */
- LAYER_FORMATNV21  = 52,       //('N', 'V', '2', '1') /* 2x2 subsampled Cb:Cr plane */
- LAYER_FORMATNV16  = 53,       //('N', 'V', '1', '6') /* 2x1 subsampled Cr:Cb plane */
- LAYER_FORMATNV61  = 54,       //('N', 'V', '6', '1') /* 2x1 subsampled Cb:Cr plane */
 
 /*
  * 3 plane YCbCr
@@ -130,12 +128,10 @@ typedef enum {
   LAYER_TRANSFORM_UNDEFINED
 } LAYER_TRANSFORM;
 
-#define MAX_RESOURCE_PATH 256
-
-typedef struct LAYER_PARAMETER {
+typedef struct {
    LAYER_TYPE type;
    LAYER_FORMAT format;
-   LAYER_TRANS_FORM trans_form;
+   LAYER_TRANSFORM transform;
    std::string resource_path;
    uint32_t source_width;
    uint32_t source_height;
@@ -146,12 +142,11 @@ typedef struct LAYER_PARAMETER {
    uint32_t frame_x;
    uint32_t frame_y;
    uint32_t frame_width;
-   uint32_t frame_height; 
+   uint32_t frame_height;
 } LAYER_PARAMETER;
 
-typedef std::vector<LAYER_PARAMER>  LAYER_PARAMETERS;
+typedef std::vector<LAYER_PARAMETER>  LAYER_PARAMETERS;
 
-bool parseLayersFromJson(char* jsonPath, LAYER_PARAMETERS parameters);
-
+bool parseLayersFromJson(const char* json_path, LAYER_PARAMETERS& parameters);
 
 #endif

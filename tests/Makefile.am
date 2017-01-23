@@ -24,9 +24,10 @@
 bin_PROGRAMS = testkmscube
 
 testkmscube_LDFLAGS = \
-	-no-undefined
+	-no-undefined \
+     -L./third_party/json-c -ljson-c
 
-AM_CPP_INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/public -I../common/core -I../common/utils -I../common/compositor -I../common/display  -I../os/linux -I./common
+AM_CPP_INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/public -I../common/core -I../common/utils -I../common/compositor -I../common/display  -I../os/linux -I./common -I./third_party/json-c
 AM_CPPFLAGS = -std=c++11
 AM_CPPFLAGS += $(AM_CPP_INCLUDES) $(CWARNFLAGS) $(DRM_CFLAGS) $(DEBUG_CFLAGS)
 
@@ -52,4 +53,5 @@ testkmscube_SOURCES = \
     ./common/videolayerrenderer.cpp \
     ./common/imagelayerrenderer.cpp \
     ./common/esTransform.c \
+    ./common/layerfromjson.cpp \
 	./kmscube/kmscubenew.cpp
