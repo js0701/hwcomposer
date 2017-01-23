@@ -26,7 +26,7 @@ bin_PROGRAMS = testkmscube
 testkmscube_LDFLAGS = \
 	-no-undefined
 
-AM_CPP_INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/public -I./core -I./utils -I./compositor -I./display  -I../os/linux
+AM_CPP_INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/public -I../common/core -I../common/utils -I../common/compositor -I../common/display  -I../os/linux -I./common
 AM_CPPFLAGS = -std=c++11
 AM_CPPFLAGS += $(AM_CPP_INCLUDES) $(CWARNFLAGS) $(DRM_CFLAGS) $(DEBUG_CFLAGS)
 
@@ -43,8 +43,13 @@ testkmscube_CFLAGS = \
 	$(GBM_CFLAGS) \
 	$(EGL_CFLAGS) \
 	$(GLES2_CFLAGS) \
-        $(AM_CPPFLAGS)
+    $(AM_CPPFLAGS)
 
 testkmscube_SOURCES = \
-	./kmscube/kmscube.cpp \
-	./kmscube/esTransform.c
+    ./common/layerrenderer.cpp \
+    ./common/gllayerrenderer.cpp \
+    ./common/kmscubelayerrenderer.cpp \
+    ./common/videolayerrenderer.cpp \
+    ./common/imagelayerrenderer.cpp \
+    ./common/esTransform.c \
+	./kmscube/kmscubenew.cpp
