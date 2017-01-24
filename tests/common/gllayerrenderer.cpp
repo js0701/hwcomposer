@@ -36,7 +36,13 @@ bool GLLayerRenderer::Init(uint32_t width, uint32_t height, uint32_t format)
    if(format != GBM_FORMAT_XRGB8888) return false;
    if(!LayerRenderer::Init(width, height, format)) return false;
 
-   EGLint major, minor;
+   EGLint major, minor, n;
+   static const EGLint context_attribs[] = {EGL_CONTEXT_CLIENT_VERSION, 3,
+                                           EGL_NONE};
+
+   static const EGLint config_attribs[] = {EGL_SURFACE_TYPE, EGL_DONT_CARE,
+                                          EGL_NONE};
+										  
    gl_.display = eglGetPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA,
                                      EGL_DEFAULT_DISPLAY, NULL);
 
@@ -64,7 +70,24 @@ bool GLLayerRenderer::Init(uint32_t width, uint32_t height, uint32_t format)
   printf("EGL Version \"%s\"\n", eglQueryString(gl_.display, EGL_VERSION));
   printf("EGL Vendor \"%s\"\n", eglQueryString(gl_.display, EGL_VENDOR));
   printf("EGL Extensions \"%s\"\n", eglQueryString(gl_.display, EGL_EXTENSIONS));
-
+  
+  if (!eglBindAPI(EGL_OPENGL_ES_API)) {
+    printf("failed to bind api EGL_OPENGL_ES_API\n");
+    return -1;
+  }
+  if (!eglChooseConfig(gl_.display, config_attribs, &gl_.config, 1, &n) ||
+      n != 1) {
+    printf("failed to choose config: %d\n", n);
+    return -1;
+  }
+  gl_.context =
+      eglCreateContext(gl_.display, gl_.config, EGL_NO_CONTEXT, context_attribs);
+  if (gl_.context == NULL) {
+    printf("failed to create context\n");
+    return -1;
+  }
+  eglMakeCurrent(gl_.display, EGL_NO_SURFACE, EGL_NO_SURFACE, gl_.context);
+  
   int gbm_bo_fd = native_handle_.import_data.fd;
   const EGLint image_attrs[] = {
         EGL_WIDTH,                     width,
@@ -106,13 +129,15 @@ bool GLLayerRenderer::Init(uint32_t width, uint32_t height, uint32_t format)
 
 void GLLayerRenderer::Draw(int64_t * pfence)
 {
+  eglMakeCurrent(gl_.display, EGL_NO_SURFACE, EGL_NO_SURFACE, gl_.context);
+  
   glBindFramebuffer(GL_FRAMEBUFFER, gl_framebuffer_);
   //glClearColor(0.5, 0.5, 0.5, 1.0);
   //glClear(GL_COLOR_BUFFER_BIT);
   //glFinish();
 
   glDrawFrame();
-
+  
   //EGLSyncKHR gpu_fence = create_fence(EGL_NO_NATIVE_FENCE_FD_ANDROID);
   EGLint attrib_list[] = {
       EGL_SYNC_NATIVE_FENCE_FD_ANDROID, EGL_NO_NATIVE_FENCE_FD_ANDROID, EGL_NONE,

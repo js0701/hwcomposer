@@ -136,24 +136,6 @@ bool KMSCubeLayerRenderer::Init(uint32_t width, uint32_t height, uint32_t format
                                     0.0f,  // green
                                     1.0f, 1.0f,
                                     0.0f,  // yellow
-                                    // left
-                                    0.0f, 0.0f,
-                                    0.0f,  // black
-                                    0.0f, 0.0f,
-                                    1.0f,  // blue
-                                    0.0f, 1.0f,
-                                    0.0f,  // green
-                                    0.0f, 1.0f,
-                                    1.0f,  // cyan
-                                    // top
-                                    0.0f, 1.0f,
-                                    1.0f,  // cyan
-                                    1.0f, 1.0f,
-                                    1.0f,  // white
-                                    0.0f, 1.0f,
-                                    0.0f,  // green
-                                    1.0f, 1.0f,
-                                    0.0f,  // yellow
                                     // bottom
                                     0.0f, 0.0f,
                                     0.0f,  // black
@@ -220,13 +202,7 @@ bool KMSCubeLayerRenderer::Init(uint32_t width, uint32_t height, uint32_t format
                                      +0.0f, -1.0f,
                                      +0.0f  // down
   };
-
-  static const EGLint context_attribs[] = {EGL_CONTEXT_CLIENT_VERSION, 3,
-                                           EGL_NONE};
-
-  static const EGLint config_attribs[] = {EGL_SURFACE_TYPE, EGL_DONT_CARE,
-                                          EGL_NONE};
-
+  
   static const char *vertex_shader_source =
       "uniform mat4 modelviewMatrix;      \n"
       "uniform mat4 modelviewprojectionMatrix;\n"
@@ -384,8 +360,8 @@ void KMSCubeLayerRenderer::glDrawFrame() {
   esRotate(&modelview, 10.0f + (0.15f * frame_count_), 0.0f, 0.0f, 1.0f);
 
   frame_count_++;
-  uint32_t height = native_handle_.import_data.width;
-  uint32_t width  = native_handle_.import_data.height;
+  uint32_t height = native_handle_.import_data.height;
+  uint32_t width  = native_handle_.import_data.width;
 
   GLfloat aspect = (GLfloat)(height) / (GLfloat)(width);
 
