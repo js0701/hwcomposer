@@ -117,7 +117,7 @@ static int init_gbm(int fd) {
   return 0;
 }
 
-const char json_path[] = "frames_config.json";
+char json_path[1024];
 
 static uint32_t layerformat2gbmformat(LAYER_FORMAT format)
 {
@@ -261,14 +261,17 @@ static void fill_hwclayer(hwcomposer::HwcLayer * pHwcLayer, LAYER_PARAMETER *pPa
 
 static void init_frames(int32_t width, int32_t height) {
 
+  printf("init_frames, json_path:%s\n", json_path);
+  std::vector<LAYER_PARAMETER> layer_parameters;
+  printf("\nLINE269\n");
+  parseLayersFromJson(json_path, layer_parameters);
+
   for (int i = 0; i < ARRAY_SIZE(frames); ++i) {
     struct frame *frame = &frames[i];
-	std::vector<LAYER_PARAMETER> layer_parameters;
-	parseLayersFromJson(json_path, layer_parameters);
 
 	for(int j = 0; j < layer_parameters.size(); ++j)
 	{
-	   LAYER_PARAMETER layer_parameter = layer_parameters[i];
+	   LAYER_PARAMETER layer_parameter = layer_parameters[j];
 	   LayerRenderer* renderer = NULL;
 	   hwcomposer::HwcLayer* hwc_layer = NULL;
 	   uint32_t gbm_format = layerformat2gbmformat(layer_parameter.format);
@@ -276,12 +279,15 @@ static void init_frames(int32_t width, int32_t height) {
 	   switch(layer_parameter.type)
 	   {
 	     case LAYER_TYPE_GL:
+                      printf("\nLINE281\n");
 		      renderer = new KMSCubeLayerRenderer(gbm.dev);
 		      break;
-         case LAYER_TYPE_VIDEO:
+             case LAYER_TYPE_VIDEO:
+                      printf("\nLINE285\n");
 		      renderer = new VideoLayerRenderer(gbm.dev);
 		      break;
-         case LAYER_TYPE_IMAGE:
+             case LAYER_TYPE_IMAGE:
+                      printf("\nLINE289\n");
 		      renderer = new ImageLayerRenderer(gbm.dev);
 		      break;
 	     default:
@@ -289,28 +295,32 @@ static void init_frames(int32_t width, int32_t height) {
 		      return;
 	   }
 
+           printf("\nlayer parmeters: %u, %u, %u\n", layer_parameter.source_width, layer_parameter.source_height, gbm_format);
 	   if(! renderer->Init(layer_parameter.source_width, layer_parameter.source_height, gbm_format ) )
 	   {
-	       printf("render init not successful\n");
-		   exit(-1);
+	       printf("\nrender init not successful\n");
+	       exit(-1);
 	   }
 
 	   hwc_layer = new hwcomposer::HwcLayer();
 	   fill_hwclayer(hwc_layer, &layer_parameter, renderer);
+           printf("\nFinished fill the layer!\n");
 	   frame->layers.push_back(std::unique_ptr<hwcomposer::HwcLayer>(hwc_layer));
 	   frame->layer_renderers.push_back(std::unique_ptr<LayerRenderer>(renderer));
+           printf("\nFinished add layer to frame!\n");
 	}
   }
 }
 
 static void print_help(void) {
-  printf("usage: kmscube [-h|--help] [-f|--frames <frames>]\n");
+  printf("usage: kmscube [-h|--help] [-f|--frames <frames>] [-j|--json <jsonfile>]\n");
 }
 
 static void parse_args(int argc, char *argv[]) {
   static const struct option longopts[] = {
       {"help", no_argument, NULL, 'h'},
       {"frames", required_argument, NULL, 'f'},
+      {"json", required_argument, NULL, 'j'}, 
       {0},
   };
 
@@ -321,12 +331,22 @@ static void parse_args(int argc, char *argv[]) {
   /* Suppress getopt's poor error messages */
   opterr = 0;
 
-  while ((opt = getopt_long(argc, argv, "+:hf:", longopts,
+  while ((opt = getopt_long(argc, argv, "+:hfj:", longopts,
                             /*longindex*/ &longindex)) != -1) {
     switch (opt) {
       case 'h':
         print_help();
         exit(0);
+        break;
+      case 'j':
+        if(strlen(optarg) >=1024)
+        {
+          printf("too long json file path, litmited less than 1024!\n");
+          exit(0); 
+        
+        }
+        printf("optarg:%s\n", optarg);
+        strcpy(json_path, optarg);
         break;
       case 'f':
         errno = 0;
@@ -387,6 +407,7 @@ int main(int argc, char *argv[]) {
   std::vector<hwcomposer::HwcLayer *> layers;
 
   struct frame *frame_old = NULL;
+  printf("\n LINE410\n");
 
   for (uint64_t i = 1; arg_frames == 0 || i < arg_frames; ++i) {
     struct frame *frame = &frames[i % ARRAY_SIZE(frames)];
@@ -395,7 +416,9 @@ int main(int argc, char *argv[]) {
      * Wait on the fence from the previous frame, since the current one was not
      * submitted yet and thus has no valid fence.
      */
-
+    
+    if(frame_old)
+    {
     for(uint32_t j = 0; j < frame_old->layers.size(); j++)
     {
       if (frame_old && frame_old->layers[j]->release_fence.get() != -1) {
@@ -407,9 +430,11 @@ int main(int argc, char *argv[]) {
         }
       }
     }
+    }
 
     std::vector<hwcomposer::HwcLayer *>().swap(layers);
 
+    printf("\n line347\n");
     for(uint32_t j = 0; j < frame->layers.size(); j++)
     {
       frame->layer_renderers[j]->Draw(&gpu_fence_fd);
