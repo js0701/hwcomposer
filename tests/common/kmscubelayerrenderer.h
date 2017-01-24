@@ -15,7 +15,7 @@
 */
 
 #ifndef KMSCUBE_LAYER_RENDERER_H_
-#define KMSCUBE_LAYER_RENDERER_H
+#define KMSCUBE_LAYER_RENDERER_H_
 
 #include "gllayerrenderer.h"
 

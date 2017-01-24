@@ -15,7 +15,7 @@
 */
 
 #ifndef LAYER_RENDERER_H_
-#define LAYER_RENDERER_H
+#define LAYER_RENDERER_H_
 
 #include <gbm.h>
 #include "platformdefines.h"

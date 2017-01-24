@@ -15,7 +15,7 @@
 */
 
 #ifndef IMAGE_LAYER_RENDERER_H_
-#define IMAGE_LAYER_RENDERER_H
+#define IMAGE_LAYER_RENDERER_H_
 
 #include "platformdefines.h"
 #include "layerrenderer.h"

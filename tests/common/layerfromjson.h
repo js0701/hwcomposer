@@ -48,33 +48,33 @@ typedef enum {
  LAYER_FORMAT_BGR888 = 24,      //('B', 'G', '2', '4') /* [23:0] B:G:R little endian */
 
 /* 32 bpp RGB */
- LAYER_FORMATXRGB8888 = 25,   //('X', 'R', '2', '4') /* [31:0] x:R:G:B 8:8:8:8 little endian */
- LAYER_FORMATXBGR8888 = 26,    //('X', 'B', '2', '4') /* [31:0] x:B:G:R 8:8:8:8 little endian */
- LAYER_FORMATRGBX8888 = 27,    //('R', 'X', '2', '4') /* [31:0] R:G:B:x 8:8:8:8 little endian */
- LAYER_FORMATBGRX8888 = 28,    //('B', 'X', '2', '4') /* [31:0] B:G:R:x 8:8:8:8 little endian */
+ LAYER_FORMAT_XRGB8888 = 25,   //('X', 'R', '2', '4') /* [31:0] x:R:G:B 8:8:8:8 little endian */
+ LAYER_FORMAT_XBGR8888 = 26,    //('X', 'B', '2', '4') /* [31:0] x:B:G:R 8:8:8:8 little endian */
+ LAYER_FORMAT_RGBX8888 = 27,    //('R', 'X', '2', '4') /* [31:0] R:G:B:x 8:8:8:8 little endian */
+ LAYER_FORMAT_BGRX8888 = 28,    //('B', 'X', '2', '4') /* [31:0] B:G:R:x 8:8:8:8 little endian */
 
- LAYER_FORMATARGB8888 = 29,    //('A', 'R', '2', '4') /* [31:0] A:R:G:B 8:8:8:8 little endian */
- LAYER_FORMATABGR8888 = 30,    //('A', 'B', '2', '4') /* [31:0] A:B:G:R 8:8:8:8 little endian */
- LAYER_FORMATRGBA8888 = 31,    //('R', 'A', '2', '4') /* [31:0] R:G:B:A 8:8:8:8 little endian */
- LAYER_FORMATBGRA8888 = 32,    //('B', 'A', '2', '4') /* [31:0] B:G:R:A 8:8:8:8 little endian */
+ LAYER_FORMAT_ARGB8888 = 29,    //('A', 'R', '2', '4') /* [31:0] A:R:G:B 8:8:8:8 little endian */
+ LAYER_FORMAT_ABGR8888 = 30,    //('A', 'B', '2', '4') /* [31:0] A:B:G:R 8:8:8:8 little endian */
+ LAYER_FORMAT_RGBA8888 = 31,    //('R', 'A', '2', '4') /* [31:0] R:G:B:A 8:8:8:8 little endian */
+ LAYER_FORMAT_BGRA8888 = 32,    //('B', 'A', '2', '4') /* [31:0] B:G:R:A 8:8:8:8 little endian */
 
- LAYER_FORMATXRGB2101010 = 33, //('X', 'R', '3', '0') /* [31:0] x:R:G:B 2:10:10:10 little endian */
- LAYER_FORMATXBGR2101010 = 34, //('X', 'B', '3', '0') /* [31:0] x:B:G:R 2:10:10:10 little endian */
- LAYER_FORMATRGBX1010102 = 35, //('R', 'X', '3', '0') /* [31:0] R:G:B:x 10:10:10:2 little endian */
- LAYER_FORMATBGRX1010102 = 36, //('B', 'X', '3', '0') /* [31:0] B:G:R:x 10:10:10:2 little endian */
+ LAYER_FORMAT_XRGB2101010 = 33, //('X', 'R', '3', '0') /* [31:0] x:R:G:B 2:10:10:10 little endian */
+ LAYER_FORMAT_XBGR2101010 = 34, //('X', 'B', '3', '0') /* [31:0] x:B:G:R 2:10:10:10 little endian */
+ LAYER_FORMAT_RGBX1010102 = 35, //('R', 'X', '3', '0') /* [31:0] R:G:B:x 10:10:10:2 little endian */
+ LAYER_FORMAT_BGRX1010102 = 36, //('B', 'X', '3', '0') /* [31:0] B:G:R:x 10:10:10:2 little endian */
 
- LAYER_FORMATARGB2101010 = 37, //('A', 'R', '3', '0') /* [31:0] A:R:G:B 2:10:10:10 little endian */
- LAYER_FORMATABGR2101010 = 38, //('A', 'B', '3', '0') /* [31:0] A:B:G:R 2:10:10:10 little endian */
- LAYER_FORMATRGBA1010102 = 39, //('R', 'A', '3', '0') /* [31:0] R:G:B:A 10:10:10:2 little endian */
- LAYER_FORMATBGRA1010102 = 40, //('B', 'A', '3', '0') /* [31:0] B:G:R:A 10:10:10:2 little endian */
+ LAYER_FORMAT_ARGB2101010 = 37, //('A', 'R', '3', '0') /* [31:0] A:R:G:B 2:10:10:10 little endian */
+ LAYER_FORMAT_ABGR2101010 = 38, //('A', 'B', '3', '0') /* [31:0] A:B:G:R 2:10:10:10 little endian */
+ LAYER_FORMAT_RGBA1010102 = 39, //('R', 'A', '3', '0') /* [31:0] R:G:B:A 10:10:10:2 little endian */
+ LAYER_FORMAT_BGRA1010102 = 40, //('B', 'A', '3', '0') /* [31:0] B:G:R:A 10:10:10:2 little endian */
 
 /* packed YCbCr */
- LAYER_FORMATYUYV = 41,        //('Y', 'U', 'Y', 'V') /* [31:0] Cr0:Y1:Cb0:Y0 8:8:8:8 little endian */
- LAYER_FORMATYVYU = 42,        //('Y', 'V', 'Y', 'U') /* [31:0] Cb0:Y1:Cr0:Y0 8:8:8:8 little endian */
- LAYER_FORMATUYVY = 43,        //('U', 'Y', 'V', 'Y') /* [31:0] Y1:Cr0:Y0:Cb0 8:8:8:8 little endian */
- LAYER_FORMATVYUY = 44,        //('V', 'Y', 'U', 'Y') /* [31:0] Y1:Cb0:Y0:Cr0 8:8:8:8 little endian */
+ LAYER_FORMAT_YUYV = 41,        //('Y', 'U', 'Y', 'V') /* [31:0] Cr0:Y1:Cb0:Y0 8:8:8:8 little endian */
+ LAYER_FORMAT_YVYU = 42,        //('Y', 'V', 'Y', 'U') /* [31:0] Cb0:Y1:Cr0:Y0 8:8:8:8 little endian */
+ LAYER_FORMAT_UYVY = 43,        //('U', 'Y', 'V', 'Y') /* [31:0] Y1:Cr0:Y0:Cb0 8:8:8:8 little endian */
+ LAYER_FORMAT_VYUY = 44,        //('V', 'Y', 'U', 'Y') /* [31:0] Y1:Cb0:Y0:Cr0 8:8:8:8 little endian */
 
- LAYER_FORMATAYUV = 45,        //('A', 'Y', 'U', 'V') /* [31:0] A:Y:Cb:Cr 8:8:8:8 little endian */
+ LAYER_FORMAT_AYUV = 45,        //('A', 'Y', 'U', 'V') /* [31:0] A:Y:Cb:Cr 8:8:8:8 little endian */
 
 /*
  * 2 plane YCbCr
@@ -83,10 +83,10 @@ typedef enum {
  * or
  * index 1 = Cb:Cr plane, [15:0] Cb:Cr little endian
  */
- LAYER_FORMATNV12  = 47,       //('N', 'V', '1', '2') /* 2x2 subsampled Cr:Cb plane */
- LAYER_FORMATNV21  = 48,       //('N', 'V', '2', '1') /* 2x2 subsampled Cb:Cr plane */
- LAYER_FORMATNV16  = 49,       //('N', 'V', '1', '6') /* 2x1 subsampled Cr:Cb plane */
- LAYER_FORMATNV61  = 50,       //('N', 'V', '6', '1') /* 2x1 subsampled Cb:Cr plane */
+ LAYER_FORMAT_NV12  = 47,       //('N', 'V', '1', '2') /* 2x2 subsampled Cr:Cb plane */
+ LAYER_FORMAT_NV21  = 48,       //('N', 'V', '2', '1') /* 2x2 subsampled Cb:Cr plane */
+ LAYER_FORMAT_NV16  = 49,       //('N', 'V', '1', '6') /* 2x1 subsampled Cr:Cb plane */
+ LAYER_FORMAT_NV61  = 50,       //('N', 'V', '6', '1') /* 2x1 subsampled Cb:Cr plane */
 
 /*
  * 3 plane YCbCr
@@ -97,16 +97,16 @@ typedef enum {
  * index 1: Cr plane, [7:0] Cr
  * index 2: Cb plane, [7:0] Cb
  */
- LAYER_FORMATYUV410 = 55,      //('Y', 'U', 'V', '9') /* 4x4 subsampled Cb (1) and Cr (2) planes */
- LAYER_FORMATYVU410 = 56,      //('Y', 'V', 'U', '9') /* 4x4 subsampled Cr (1) and Cb (2) planes */
- LAYER_FORMATYUV411 = 57,      //('Y', 'U', '1', '1') /* 4x1 subsampled Cb (1) and Cr (2) planes */
- LAYER_FORMATYVU411 = 58,      //('Y', 'V', '1', '1') /* 4x1 subsampled Cr (1) and Cb (2) planes */
- LAYER_FORMATYUV420 = 59,      //('Y', 'U', '1', '2') /* 2x2 subsampled Cb (1) and Cr (2) planes */
- LAYER_FORMATYVU420 = 60,      //('Y', 'V', '1', '2') /* 2x2 subsampled Cr (1) and Cb (2) planes */
- LAYER_FORMATYUV422 = 61,      //('Y', 'U', '1', '6') /* 2x1 subsampled Cb (1) and Cr (2) planes */
- LAYER_FORMATYVU422 = 62,      //('Y', 'V', '1', '6') /* 2x1 subsampled Cr (1) and Cb (2) planes */
- LAYER_FORMATYUV444 = 63,      //('Y', 'U', '2', '4') /* non-subsampled Cb (1) and Cr (2) planes */
- LAYER_FORMATYVU444 = 64,     // ('Y', 'V', '2', '4') /* non-subsampled Cr (1) and Cb (2) planes */
+ LAYER_FORMAT_YUV410 = 51,      //('Y', 'U', 'V', '9') /* 4x4 subsampled Cb (1) and Cr (2) planes */
+ LAYER_FORMAT_YVU410 = 52,      //('Y', 'V', 'U', '9') /* 4x4 subsampled Cr (1) and Cb (2) planes */
+ LAYER_FORMAT_YUV411 = 53,      //('Y', 'U', '1', '1') /* 4x1 subsampled Cb (1) and Cr (2) planes */
+ LAYER_FORMAT_YVU411 = 54,      //('Y', 'V', '1', '1') /* 4x1 subsampled Cr (1) and Cb (2) planes */
+ LAYER_FORMAT_YUV420 = 55,      //('Y', 'U', '1', '2') /* 2x2 subsampled Cb (1) and Cr (2) planes */
+ LAYER_FORMAT_YVU420 = 56,      //('Y', 'V', '1', '2') /* 2x2 subsampled Cr (1) and Cb (2) planes */
+ LAYER_FORMAT_YUV422 = 57,      //('Y', 'U', '1', '6') /* 2x1 subsampled Cb (1) and Cr (2) planes */
+ LAYER_FORMAT_YVU422 = 58,      //('Y', 'V', '1', '6') /* 2x1 subsampled Cr (1) and Cb (2) planes */
+ LAYER_FORMAT_YUV444 = 59,      //('Y', 'U', '2', '4') /* non-subsampled Cb (1) and Cr (2) planes */
+ LAYER_FORMAT_YVU444 = 60,     // ('Y', 'V', '2', '4') /* non-subsampled Cr (1) and Cb (2) planes */
 
  LAYER_FORMAT_UNDEFINED
 

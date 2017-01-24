@@ -15,7 +15,7 @@
 */
 
 #ifndef VIDEO_LAYER_RENDERER_H_
-#define VIDEO_LAYER_RENDERER_H
+#define VIDEO_LAYER_RENDERER_H_
 
 #include "platformdefines.h"
 #include "layerrenderer.h"

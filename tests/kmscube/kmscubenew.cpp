@@ -53,7 +53,10 @@
 #include <nativefence.h>
 #include <spinlock.h>
 
-#include <kmscubelayerrenderer.h>
+#include "kmscubelayerrenderer.h"
+#include "videolayerrenderer.h"
+#include "imagelayerrenderer.h"
+#include "layerfromjson.h"
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
@@ -63,10 +66,14 @@
 static uint64_t arg_frames = 0;
 
 struct frame {
-  hwcomposer::HwcLayer layer;
-  LayerRenderer* layer_renderer;
+  std::vector< std::unique_ptr <hwcomposer::HwcLayer> > layers;
+  std::vector< std::unique_ptr <LayerRenderer> >        layer_renderers;
   // NativeFence release_fence;
 };
+
+static void setHWCLayer(LAYER_PARAMETER* pParameter,  LayerRenderer* pRenderer) {
+
+}
 
 static struct frame frames[2];
 
@@ -110,20 +117,189 @@ static int init_gbm(int fd) {
   return 0;
 }
 
+const char json_path[] = "frames_config.json";
+
+static uint32_t layerformat2gbmformat(LAYER_FORMAT format)
+{
+   uint32_t iformat=(uint32_t)format;
+   switch(format)
+   {
+     case LAYER_FORMAT_C8 :
+        return GBM_FORMAT_C8;
+     case LAYER_FORMAT_R8:
+        return GBM_FORMAT_R8;
+     case LAYER_FORMAT_GR88:
+	    return GBM_FORMAT_GR88;
+     case LAYER_FORMAT_RGB332:
+	    return GBM_FORMAT_RGB332;
+	 case LAYER_FORMAT_BGR233:
+        return GBM_FORMAT_BGR233;
+     case LAYER_FORMAT_XRGB4444:
+        return GBM_FORMAT_XRGB4444;
+     case LAYER_FORMAT_XBGR4444:
+	    return GBM_FORMAT_XBGR4444;
+     case LAYER_FORMAT_RGBX4444:
+        return GBM_FORMAT_RGBX4444;
+     case LAYER_FORMAT_BGRX4444:
+        return GBM_FORMAT_BGRX4444;
+     case LAYER_FORMAT_ARGB4444:
+        return GBM_FORMAT_ARGB4444;
+     case LAYER_FORMAT_ABGR4444:
+        return GBM_FORMAT_ABGR4444;
+     case LAYER_FORMAT_RGBA4444:
+        return GBM_FORMAT_RGBA4444;
+     case LAYER_FORMAT_BGRA4444:
+        return GBM_FORMAT_BGRA4444;
+     case LAYER_FORMAT_XRGB1555:
+        return GBM_FORMAT_XRGB1555;
+     case LAYER_FORMAT_XBGR1555:
+        return GBM_FORMAT_XBGR1555;
+     case LAYER_FORMAT_RGBX5551:
+        return GBM_FORMAT_RGBX5551;
+     case LAYER_FORMAT_BGRX5551:
+        return GBM_FORMAT_BGRX5551;
+     case LAYER_FORMAT_ARGB1555:
+        return GBM_FORMAT_ARGB1555;
+     case LAYER_FORMAT_ABGR1555:
+        return GBM_FORMAT_ABGR1555;
+     case LAYER_FORMAT_RGBA5551:
+         return GBM_FORMAT_RGBA5551;
+     case LAYER_FORMAT_BGRA5551:
+         return GBM_FORMAT_BGRA5551;
+     case LAYER_FORMAT_RGB565 :
+         return GBM_FORMAT_RGB565;
+     case LAYER_FORMAT_BGR565 :
+         return GBM_FORMAT_BGR565;
+     case LAYER_FORMAT_RGB888 :
+         return GBM_FORMAT_RGB888;
+     case LAYER_FORMAT_BGR888 :
+         return GBM_FORMAT_BGR888;
+     case LAYER_FORMAT_XRGB8888 :
+         return GBM_FORMAT_XRGB8888;
+     case LAYER_FORMAT_XBGR8888 :
+         return GBM_FORMAT_XBGR8888;
+     case LAYER_FORMAT_RGBX8888 :
+         return GBM_FORMAT_RGBX8888;
+     case LAYER_FORMAT_BGRX8888 :
+         return GBM_FORMAT_BGRX8888;
+     case LAYER_FORMAT_ARGB8888 :
+         return GBM_FORMAT_ARGB8888;
+     case LAYER_FORMAT_ABGR8888 :
+         return GBM_FORMAT_ABGR8888;
+     case LAYER_FORMAT_RGBA8888 :
+         return GBM_FORMAT_RGBA8888;
+     case LAYER_FORMAT_BGRA8888 :
+         return GBM_FORMAT_BGRA8888;
+     case LAYER_FORMAT_XRGB2101010:
+	     return GBM_FORMAT_XRGB2101010;
+     case LAYER_FORMAT_XBGR2101010:
+	     return GBM_FORMAT_XBGR2101010;
+     case LAYER_FORMAT_RGBX1010102:
+	     return GBM_FORMAT_RGBX1010102;
+     case LAYER_FORMAT_BGRX1010102:
+	     return GBM_FORMAT_BGRX1010102;
+     case LAYER_FORMAT_ARGB2101010:
+	     return GBM_FORMAT_ARGB2101010;
+     case LAYER_FORMAT_ABGR2101010:
+	     return GBM_FORMAT_ABGR2101010;
+     case LAYER_FORMAT_RGBA1010102:
+	     return GBM_FORMAT_RGBA1010102;
+     case LAYER_FORMAT_BGRA1010102:
+	     return GBM_FORMAT_BGRA1010102;
+     case LAYER_FORMAT_YUYV :
+         return GBM_FORMAT_YUYV;
+     case LAYER_FORMAT_YVYU :
+         return GBM_FORMAT_YVYU;
+     case LAYER_FORMAT_UYVY :
+         return GBM_FORMAT_UYVY;
+     case LAYER_FORMAT_VYUY :
+         return GBM_FORMAT_VYUY;
+     case LAYER_FORMAT_AYUV :
+         return GBM_FORMAT_AYUV;
+     case LAYER_FORMAT_NV12 :
+         return GBM_FORMAT_NV12;
+     case LAYER_FORMAT_NV21 :
+         return GBM_FORMAT_NV21;
+     case LAYER_FORMAT_NV16 :
+         return GBM_FORMAT_NV16;
+     case LAYER_FORMAT_NV61 :
+         return GBM_FORMAT_NV61;
+     case LAYER_FORMAT_YUV410:
+         return GBM_FORMAT_YUV410;
+     case LAYER_FORMAT_YVU410 :
+         return GBM_FORMAT_YVU410;
+     case LAYER_FORMAT_YUV411 :
+         return GBM_FORMAT_YUV411;
+     case LAYER_FORMAT_YVU411 :
+         return GBM_FORMAT_YVU411;
+     case LAYER_FORMAT_YUV420 :
+         return GBM_FORMAT_YUV420;
+     case LAYER_FORMAT_YVU420 :
+         return GBM_FORMAT_YVU420;
+     case LAYER_FORMAT_YUV422 :
+         return GBM_FORMAT_YUV422;
+     case LAYER_FORMAT_YVU422 :
+         return GBM_FORMAT_YVU422;
+     case LAYER_FORMAT_YUV444 :
+         return GBM_FORMAT_YUV444;
+     case LAYER_FORMAT_YVU444 :
+         return GBM_FORMAT_YVU444;
+     case LAYER_FORMAT_UNDEFINED :
+	      return (uint32_t) -1;
+   }
+
+   return (uint32_t) -1;
+}
+
+static void fill_hwclayer(hwcomposer::HwcLayer * pHwcLayer, LAYER_PARAMETER *pParameter, LayerRenderer* pRenderer)
+{
+    pHwcLayer->SetTransform(pParameter->transform);
+    pHwcLayer->SetSourceCrop(hwcomposer::HwcRect<float>(pParameter->source_crop_x, pParameter->source_crop_y, pParameter->source_crop_width, pParameter->source_crop_height));
+    pHwcLayer->SetDisplayFrame(hwcomposer::HwcRect<int>(pParameter->frame_x, pParameter->frame_y, pParameter->frame_width, pParameter->frame_height));
+    pHwcLayer->SetNativeHandle(pRenderer->GetNativeBoHandle());
+}
+
 static void init_frames(int32_t width, int32_t height) {
+
   for (int i = 0; i < ARRAY_SIZE(frames); ++i) {
     struct frame *frame = &frames[i];
-    // now we need to parse the configuration from json
-    frame->layer_renderer = new KMSCubeLayerRenderer(gbm.dev);
-    if(!frame->layer_renderer->Init(width,  height,GBM_FORMAT_XRGB8888))
+	std::vector<LAYER_PARAMETER> layer_parameters;
+	parseLayersFromJson(json_path, layer_parameters);
+
+	for(int j = 0; j < layer_parameters.size(); ++j)
 	{
-	    printf("LayerRenderer failed to initialize!\n");
-		exit(-1);
+	   LAYER_PARAMETER layer_parameter = layer_parameters[i];
+	   LayerRenderer* renderer = NULL;
+	   hwcomposer::HwcLayer* hwc_layer = NULL;
+	   uint32_t gbm_format = layerformat2gbmformat(layer_parameter.format);
+
+	   switch(layer_parameter.type)
+	   {
+	     case LAYER_TYPE_GL:
+		      renderer = new KMSCubeLayerRenderer(gbm.dev);
+		      break;
+         case LAYER_TYPE_VIDEO:
+		      renderer = new VideoLayerRenderer(gbm.dev);
+		      break;
+         case LAYER_TYPE_IMAGE:
+		      renderer = new ImageLayerRenderer(gbm.dev);
+		      break;
+	     default:
+		      printf("un-recognized layer type!\n");
+		      return;
+	   }
+
+	   if(! renderer->Init(layer_parameter.source_width, layer_parameter.source_height, gbm_format ) )
+	   {
+	       printf("render init not successful\n");
+		   exit(-1);
+	   }
+
+	   hwc_layer = new hwcomposer::HwcLayer();
+	   fill_hwclayer(hwc_layer, &layer_parameter, renderer);
+	   frame->layers.push_back(std::unique_ptr<hwcomposer::HwcLayer>(hwc_layer));
+	   frame->layer_renderers.push_back(std::unique_ptr<LayerRenderer>(renderer));
 	}
-    frame->layer.SetTransform(0);
-    frame->layer.SetSourceCrop(hwcomposer::HwcRect<float>(0, 0, width, height));
-    frame->layer.SetDisplayFrame(hwcomposer::HwcRect<int>(0, 0, width, height));
-    frame->layer.SetNativeHandle(frame->layer_renderer->GetNativeBoHandle());
   }
 }
 
@@ -219,20 +395,27 @@ int main(int argc, char *argv[]) {
      * Wait on the fence from the previous frame, since the current one was not
      * submitted yet and thus has no valid fence.
      */
-    if (frame_old && frame_old->layer.release_fence.get() != -1) {
-      ret = sync_wait(frame_old->layer.release_fence.get(), 1000);
-      frame_old->layer.release_fence.Reset(-1);
-      if (ret) {
-        printf("failed waiting on sync fence: %s\n", strerror(errno));
-        return -1;
+
+    for(uint32_t j = 0; j < frame_old->layers.size(); j++)
+    {
+      if (frame_old && frame_old->layers[j]->release_fence.get() != -1) {
+        ret = sync_wait(frame_old->layers[j]->release_fence.get(), 1000);
+        frame_old->layers[j]->release_fence.Reset(-1);
+        if (ret) {
+          printf("failed waiting on sync fence: %s\n", strerror(errno));
+          return -1;
+        }
       }
     }
 
-    frame->layer_renderer->Draw(&gpu_fence_fd);
-    frame->layer.acquire_fence = gpu_fence_fd;
-
     std::vector<hwcomposer::HwcLayer *>().swap(layers);
-    layers.emplace_back(&frame->layer);
+
+    for(uint32_t j = 0; j < frame->layers.size(); j++)
+    {
+      frame->layer_renderers[j]->Draw(&gpu_fence_fd);
+      frame->layers[j]->acquire_fence = gpu_fence_fd;
+      layers.emplace_back(frame->layers[j].get());
+    }
 
     const std::vector<hwcomposer::NativeDisplay *> &displays =
         callback->GetConnectedDisplays();

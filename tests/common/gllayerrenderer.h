@@ -15,7 +15,7 @@
 */
 
 #ifndef GL_LAYER_RENDERER_H_
-#define GL_LAYER_RENDERER_H
+#define GL_LAYER_RENDERER_H_
 
 #include "layerrenderer.h"
 #include "esUtil.h"
