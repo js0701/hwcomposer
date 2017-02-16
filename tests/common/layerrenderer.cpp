@@ -33,7 +33,7 @@ bool LayerRenderer::Init(uint32_t width, uint32_t height, uint32_t format,
   gbm_bo_ = gbm_bo_create(gbm_dev_, width, height, format,
                           GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
   if (!gbm_bo_) {
-    printf("LayerRenderer: failed to create gbm_bo\n");
+    fprintf(stderr, "LayerRenderer: failed to create gbm_bo for format:%x, please check native support for it\n", format);
     return false;
   }
 
